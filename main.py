@@ -7,6 +7,8 @@ and number of entries.
 import os
 import discord
 
+client = discord.Client()
+
 def main():
     @client.event
     async def on_ready():
@@ -18,9 +20,9 @@ def main():
             return
 
         if message.content.startswith('$hello'):
-            await message.channel.send('Hello!')
+            await message.channel.send('shut up kirby!')
 
-    client.run('your token here')
+    client.run('OTc5NTY1OTYyODgzODk5NDYy.G3dk-_.fYXth1tb5uDuMN67cwuOa2WD-JbgMZgec2VD8c')
 
 if __name__ == "__main__":
     main()
