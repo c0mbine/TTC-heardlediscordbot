@@ -13,16 +13,13 @@ Every day you don't post a heardle it counts as a skip
 gi
 
 TODO:
- - [ ] Core logic
-   - [ ] Get user name (Fake user name)
-     - [ ] Crate an array of username to value
-     - [ ] Dictionary???
-     - [ ] print out stats 
- - [ ] Parse Heardle pastes
-   - [ ] Count emjois
- - [ ] Get discord stuff
-   - [ ] Get user name
-   - [ ] 
+ - [x] Core logic
+   - [x] Get user name (Fake user name)
+     - [x] Crate an Dictionary of username to value
+ - [x] Parse Heardle pastes
+   - [x] Count emjois
+ - [x] Get discord stuff
+   - [x] Get user name
  - [ ] Store results
    - [ ] Store results in flat text file for now (on whoever)
    - [ ] OR go through all of chat and re-parse
@@ -31,3 +28,5 @@ TODO:
 
 STRETCH:
  - [ ] Gather meta data from heardle for each day 
+ - [ ] Par per genre
+ - [ ] Par per decade

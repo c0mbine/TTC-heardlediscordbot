@@ -45,12 +45,7 @@ def main():
 
             username = message.author.name + message.author.discriminator
             # await message.channel.send(message.author.name + message.author.discriminator)
-            splitMessage = message.content.split()
-            score = -1
-            for emoji in splitMessage[2]:
-                if emoji == "🟩":
-                    break
-                score += 1 
+            score = returnScore(message.content)
             await message.channel.send(message.author.name + message.author.discriminator + " got a par " + str(score))
 
 
@@ -61,6 +56,15 @@ def main():
     else:
         numHeardles[username] = 1
         scores[username] = score
+
+def returnScore(heardleRawCopyPasta):
+    score = -1
+    splitMessage = heardleRawCopyPasta.split()
+    for emoji in splitMessage[2]:
+        if emoji == "🟩":
+            break
+        score += 1
+    return score
 
 if __name__ == "__main__":
     main()
