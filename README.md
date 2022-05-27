@@ -33,3 +33,5 @@ DEV NOTES:
 # 🟨 correct artist wrong song
 
 https://discordpy.readthedocs.io
+https://discord.com/developers/applications/979565962883899462/bot
+https://www.heardle.app/
