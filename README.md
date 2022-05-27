@@ -31,3 +31,5 @@ DEV NOTES:
 # 🟩 success
 # 🟥 wrong
 # 🟨 correct artist wrong song
+
+https://discordpy.readthedocs.io
