@@ -27,5 +27,7 @@ TODO:
    - [ ] Store results in flat text file for now (on whoever)
    - [ ] OR go through all of chat and re-parse
  - [ ] Count skips if someone didn't post for a day
+
+
 STRETCH:
  - [ ] Gather meta data from heardle for each day 
