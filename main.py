@@ -20,7 +20,7 @@ def main():
             return
 
         if message.content.startswith('$hello'):
-            await message.channel.send('Hello!')
+            await message.channel.send('shut up kirby!')
 
     client.run('OTc5NTY1OTYyODgzODk5NDYy.G3dk-_.fYXth1tb5uDuMN67cwuOa2WD-JbgMZgec2VD8c')
 
