@@ -7,6 +7,8 @@ and number of entries.
 import os
 import discord
 
+client = discord.Client()
+
 def main():
     @client.event
     async def on_ready():
