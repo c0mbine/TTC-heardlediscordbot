@@ -20,7 +20,7 @@ def main():
         if message.content.startswith('$hello'):
             await message.channel.send('Hello!')
 
-    client.run('your token here')
+    client.run('OTc5NTY1OTYyODgzODk5NDYy.G3dk-_.fYXth1tb5uDuMN67cwuOa2WD-JbgMZgec2VD8c')
 
 if __name__ == "__main__":
     main()
