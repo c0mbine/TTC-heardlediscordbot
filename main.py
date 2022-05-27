@@ -57,10 +57,10 @@ def main():
     client.run('OTc5NTY1OTYyODgzODk5NDYy.G3dk-_.fYXth1tb5uDuMN67cwuOa2WD-JbgMZgec2VD8c')
     if username in scores:
         numHeardles[username] = numHeardles[username] + 1
-        scores[username] = scores[username] + 1
+        scores[username] = scores[username] + score
     else:
         numHeardles[username] = 1
-        scores[username] = 'count the emojis'
+        scores[username] = score
 
 if __name__ == "__main__":
     main()
