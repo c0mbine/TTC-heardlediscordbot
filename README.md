@@ -25,12 +25,13 @@ STRETCH:
  - [ ] Par per decade
 
 DEV NOTES:
-# 🔊 perfect
-# 🔉 sounds start Success
-# 🔇 sounds start failure
-# ⬛️ skip
-# ⬜️ didn't reach
-# 🟩 success
+# 🔊 1st try success
+# 🔉 2-5th success
+# 🔈 6th try success
+# 🔇 failure
+# ⬛️ skip #This isn't Ascii
+# ⬜️ didn't reach #This isn't Ascii
+# 🟩 success 
 # 🟥 wrong
 # 🟨 correct artist wrong song
 

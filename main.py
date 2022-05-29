@@ -37,7 +37,7 @@ def main():
             username = message.author.name + message.author.discriminator
             score = returnScore(message.content)
             updateScores
-            await message.channel.send(message.author.name + message.author.discriminator + " scored " + str(score) + " points!")
+            await message.channel.send(message.author.name + message.author.discriminator + ' scored ' + str(score) + ' points!')
     # load in env
     client.run(os.getenv('BOT_TOKEN'))
 
@@ -49,23 +49,34 @@ returns -1 if score couldn't be parsed successfully
 """
 def returnScore(heardleRawCopyPasta):
     score = -1
+
+    my_encoded_string = "⬛️".encode('cp1141')
+    print(my_encoded_string)
+    
+    good_emojis= ("🟥", "🟨", "🔉", "🔈", "🟩")
+    # emoji= ("⬛️", "⬜️", "🟥", "🟨", "🔉", "🔈", "🟩")
     splitMessage = heardleRawCopyPasta.split()
     if len(splitMessage) < 3:
         return score
 
-    if splitMessage[2][0] == "🔇":
+    if splitMessage[2][0] == '🔇':
         return 6
 
-    if splitMessage[2][0] == "🔊":
+    if splitMessage[2][0] == '🔊':
         return 1
     
     print(splitMessage[2])
 
-    for emoji in splitMessage[2]:
-        score += 1
+    for idx, emoji in enumerate(splitMessage[2]):
+        if emoji in good_emojis:
+            score += 1
+        else:
+            score += 0.5
+
         if emoji == "🟩":
-            break
-    return score
+            break       
+
+    return int(score)
 
 """
 updateScores: Update scores and save to file
