@@ -57,7 +57,7 @@ def returnScore(heardleRawCopyPasta):
         return score
 
     if splitMessage[2][0] == '🔇':
-        return 6
+        return 7
 
     if splitMessage[2][0] == '🔊':
         return 1
