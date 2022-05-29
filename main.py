@@ -36,7 +36,7 @@ def main():
         if message.content.startswith('#Heardle'):
             username = message.author.name + message.author.discriminator
             score = returnScore(message.content)
-            updateScores
+            updateScores(message.author.name, scores, numHeardles, score)
             await message.channel.send(message.author.name + message.author.discriminator + ' scored ' + str(score) + ' points!')
     # load in env
     client.run(os.getenv('BOT_TOKEN'))
@@ -49,9 +49,6 @@ returns -1 if score couldn't be parsed successfully
 """
 def returnScore(heardleRawCopyPasta):
     score = -1
-
-    my_encoded_string = "⬛️".encode('cp1141')
-    print(my_encoded_string)
     
     good_emojis= ("🟥", "🟨", "🔉", "🔈", "🟩")
     # emoji= ("⬛️", "⬜️", "🟥", "🟨", "🔉", "🔈", "🟩")
@@ -93,6 +90,11 @@ def updateScores(username, scores, numHeardles, score):
     else:
         numHeardles[username] = 1
         scores[username] = score
+    
+    jsonScores = json.dumps(scores, indent = 4)
+    jsonNumHeardles = json.dumps(numHeardles, indent = 4)
+    print(jsonScores)
+    print(jsonNumHeardles)
 
     # dynamodb = boto3.resource('dynamodb')
     # table = dynamodb.Table('ttc-heardle')
