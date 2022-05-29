@@ -6,8 +6,10 @@ and number of entries.
 """
 import os
 import json
-from xml.etree.ElementTree import tostring
 import discord
+import boto3
+from xml.etree.ElementTree import tostring
+from boto3.dynamodb.conditions import Key
 
 client = discord.Client()
 
@@ -33,7 +35,7 @@ def main():
             score = returnScore(message.content)
             updateScores
             await message.channel.send(message.author.name + message.author.discriminator + " got a par " + str(score))
-
+    # load in env
     client.run('OTc5NTY1OTYyODgzODk5NDYy.G3dk-_.fYXth1tb5uDuMN67cwuOa2WD-JbgMZgec2VD8c')
 
 
@@ -73,7 +75,21 @@ def updateScores(username, scores, numHeardles, score):
         numHeardles[username] = 1
         scores[username] = score
 
-    # TODO: overwrite/append ram dicts to file
+    # dynamodb = boto3.resource('dynamodb')
+    # table = dynamodb.Table('ttc-heardle')
+    # table.update_item(
+    #     Key={
+    #             'id': 1,
+    #         },
+    #     UpdateExpression="set first_name = :g",
+    #     ExpressionAttributeValues={
+    #             ':g': "Jane"
+    #         },
+    #     ReturnValues="UPDATED_NEW"
+    #     )
+        
+    # get_item() 
+    # #{'email': 'jdoe@test.com', 'id': Decimal('1'), 'last_name': 'Doe', 'first_name': 'Jane'}
 
 if __name__ == "__main__":
     main()
