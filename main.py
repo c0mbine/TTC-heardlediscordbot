@@ -8,6 +8,7 @@ import os
 import json
 import discord
 import boto3
+import re
 from xml.etree.ElementTree import tostring
 from boto3.dynamodb.conditions import Key
 from dotenv import load_dotenv
@@ -15,6 +16,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 client = discord.Client()
+jsonblop = { }
 
 """
 Main startup of bot and set listen for heardle posts.
@@ -36,11 +38,26 @@ def main():
         if message.content.startswith('#Heardle'):
             username = message.author.name + message.author.discriminator
             score = returnScore(message.content)
-            updateScores(message.author.name, scores, numHeardles, score)
+            heardleNum = getHeardleNum(message.content)
+            
+            # updateScores(message.author.name, scores, numHeardles, score)
+            updateJsonScores(message.author.name + message.author.discriminator, heardleNum, score)
             await message.channel.send(message.author.name + message.author.discriminator + ' scored ' + str(score) + ' points!')
+        
+        if message.content.startswith('!HeardleStats'):
+             await message.channel.send(jsonblop)
+             
     # load in env
     client.run(os.getenv('BOT_TOKEN'))
 
+"""
+GO REGEX
+
+returns a num in form of string
+"""
+def getHeardleNum(heardleRawCopyPasta):
+    heardleNum = re.search("(?!#)\d+",heardleRawCopyPasta).group()
+    return heardleNum
 
 """
 returnScore: accepts heardle copy pasta and returns score as int
@@ -61,8 +78,6 @@ def returnScore(heardleRawCopyPasta):
 
     if splitMessage[2][0] == '🔊':
         return 1
-    
-    print(splitMessage[2])
 
     for idx, emoji in enumerate(splitMessage[2]):
         if emoji in good_emojis:
@@ -95,6 +110,17 @@ def updateScores(username, scores, numHeardles, score):
     jsonNumHeardles = json.dumps(numHeardles, indent = 4)
     print(jsonScores)
     print(jsonNumHeardles)
+
+def updateJsonScores(username, heardleNum, score):
+    # TODO: 
+    # - Create an sql table of global users: USER(UID), LATEST_HEARDLE(HID)
+        # wORTHLESS... Just get the first value of the table and last entry heardle num...
+    # - Create an datadump for each user personally: USER(UID) [{HEARDLE_NUM(HID), SCORE},...]
+    if username in jsonblop.keys() :
+        jsonblop[username][heardleNum] = score
+    else:
+        jsonblop.update({username: {heardleNum:score}})
+    print(jsonblop)
 
     # dynamodb = boto3.resource('dynamodb')
     # table = dynamodb.Table('ttc-heardle')
