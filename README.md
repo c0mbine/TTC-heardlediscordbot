@@ -40,3 +40,5 @@ https://discordpy.readthedocs.io
 https://discord.com/developers/applications/979565962883899462/bot
 
 https://www.heardle.app/
+
+https://discord.com/developers/docs/intro

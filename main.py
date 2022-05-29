@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 client = discord.Client()
-jsonblop = { }
+jsonblop = {'c0mbine1820': {'91': 3, '92': 1, '93': 7}, 'Devacy5737': {'93': 6}, 'kirby4945': {'93': 1}}
 
 """
 Main startup of bot and set listen for heardle posts.
@@ -46,21 +46,27 @@ def main():
         
         if message.content.startswith('!HeardleStats'):
              await message.channel.send(jsonblop)
-             
+
     # load in env
     client.run(os.getenv('BOT_TOKEN'))
 
 """
 GO REGEX
 
-returns a num in form of string
+params:
+heardleRawCopyPasta hearlde share post
+
+returns heardle num in form of string
 """
 def getHeardleNum(heardleRawCopyPasta):
     heardleNum = re.search("(?!#)\d+",heardleRawCopyPasta).group()
     return heardleNum
 
 """
-returnScore: accepts heardle copy pasta and returns score as int
+returnScore: accepts heardle share post and returns score as int
+
+params:
+heardleRawCopyPasta hearlde share post
 
 returns -1 if score couldn't be parsed successfully
 """
@@ -91,8 +97,9 @@ def returnScore(heardleRawCopyPasta):
     return int(score)
 
 """
-updateScores: Update scores and save to file
+Update scores and save to file
 
+params:
 Username
 scores  = dict of scores
 numHeardles = total heardles user has done
@@ -111,17 +118,23 @@ def updateScores(username, scores, numHeardles, score):
     print(jsonScores)
     print(jsonNumHeardles)
 
+"""
+Adds new score to the json dump. Creates new user if required
+
+Params:
+ 
+username: Username plus the discriminator  
+heardleNum: heardls number for thier daily post
+score: 1-7 for the daily heardle
+"""
 def updateJsonScores(username, heardleNum, score):
-    # TODO: 
-    # - Create an sql table of global users: USER(UID), LATEST_HEARDLE(HID)
-        # wORTHLESS... Just get the first value of the table and last entry heardle num...
-    # - Create an datadump for each user personally: USER(UID) [{HEARDLE_NUM(HID), SCORE},...]
     if username in jsonblop.keys() :
         jsonblop[username][heardleNum] = score
     else:
         jsonblop.update({username: {heardleNum:score}})
     print(jsonblop)
 
+def updateToDynamodb(jsonblop):
     # dynamodb = boto3.resource('dynamodb')
     # table = dynamodb.Table('ttc-heardle')
     # table.update_item(
@@ -137,6 +150,10 @@ def updateJsonScores(username, heardleNum, score):
         
     # get_item() 
     # #{'email': 'jdoe@test.com', 'id': Decimal('1'), 'last_name': 'Doe', 'first_name': 'Jane'}
+    return
+
+def retreiveFromDynamodb():
+    return
 
 if __name__ == "__main__":
     main()
