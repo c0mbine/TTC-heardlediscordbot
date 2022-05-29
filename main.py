@@ -10,6 +10,9 @@ import discord
 import boto3
 from xml.etree.ElementTree import tostring
 from boto3.dynamodb.conditions import Key
+from dotenv import load_dotenv
+
+load_dotenv()
 
 client = discord.Client()
 
@@ -34,29 +37,34 @@ def main():
             username = message.author.name + message.author.discriminator
             score = returnScore(message.content)
             updateScores
-            await message.channel.send(message.author.name + message.author.discriminator + " got a par " + str(score))
+            await message.channel.send(message.author.name + message.author.discriminator + " scored " + str(score) + " points!")
     # load in env
-    client.run('OTc5NTY1OTYyODgzODk5NDYy.G3dk-_.fYXth1tb5uDuMN67cwuOa2WD-JbgMZgec2VD8c')
+    client.run(os.getenv('BOT_TOKEN'))
 
 
 """
 returnScore: accepts heardle copy pasta and returns score as int
 
-Parse heardle emojis and return scores
-# 🔉 sounds start
-# ⬛️ skip
-# ⬜️ didn't reach
-# 🟩 success
-# 🟥 wrong
-# 🟨 correct artist wrong song
+returns -1 if score couldn't be parsed successfully
 """
 def returnScore(heardleRawCopyPasta):
     score = -1
     splitMessage = heardleRawCopyPasta.split()
+    if len(splitMessage) < 3:
+        return score
+
+    if splitMessage[2][0] == "🔇":
+        return 6
+
+    if splitMessage[2][0] == "🔊":
+        return 1
+    
+    print(splitMessage[2])
+
     for emoji in splitMessage[2]:
+        score += 1
         if emoji == "🟩":
             break
-        score += 1
     return score
 
 """

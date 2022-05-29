@@ -25,7 +25,9 @@ STRETCH:
  - [ ] Par per decade
 
 DEV NOTES:
-# 🔉 sounds start
+# 🔊 perfect
+# 🔉 sounds start Success
+# 🔇 sounds start failure
 # ⬛️ skip
 # ⬜️ didn't reach
 # 🟩 success
@@ -33,5 +35,7 @@ DEV NOTES:
 # 🟨 correct artist wrong song
 
 https://discordpy.readthedocs.io
+
 https://discord.com/developers/applications/979565962883899462/bot
+
 https://www.heardle.app/
