@@ -5,19 +5,14 @@ Track our scores after a headle past
 Stats would be numbers of heardles reported divided by points
 
 TODO:
- - [x] Core logic
-   - [x] Get user name (Fake user name)
-     - [x] Crate an Dictionary of username to value
- - [x] Parse Heardle pastes
-   - [x] Count emjois
- - [x] Get discord stuff
-   - [x] Get user name
- - [ ] Store results
-   - [ ] Store results in flat text file for now (on whoever)
-   - [ ] OR go through all of chat and re-parse
+ - [ ] Store results in dynamo db
  - [ ] Count skips if someone didn't post for a day
  - [ ] When a user posts twice in the same day CALL THEM AND IDIOT
- - [ ] Account for skips
+ - [ ] Account for when a player skips
+ - [ ] Come up with stats to show players
+   - [ ] Leaderboard?
+   - [ ] par?
+ - [ ] Make MVP commands for bot
 
 STRETCH:
  - [ ] Gather meta data from heardle for each day 
@@ -42,3 +37,12 @@ https://discord.com/developers/applications/979565962883899462/bot
 https://www.heardle.app/
 
 https://discord.com/developers/docs/intro
+
+Old TODOs:
+ - [x] Core logic
+   - [x] Get user name (Fake user name)
+     - [x] Crate an Dictionary of username to value
+ - [x] Parse Heardle pastes
+   - [x] Count emjois
+ - [x] Get discord stuff
+   - [x] Get user name

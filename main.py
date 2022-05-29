@@ -4,8 +4,10 @@ A Discord bot to keep track of Heardle scores.
 Any member can use the bot to track their scores
 and number of entries.
 """
+from copy import error
 import os
 import json
+import string
 import discord
 import boto3
 import re
@@ -16,12 +18,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 client = discord.Client()
-jsonblop = {'c0mbine1820': {'91': 3, '92': 1, '93': 7}, 'Devacy5737': {'93': 6}, 'kirby4945': {'93': 1}}
+# jsonblop = {'c0mbine1820': {'app': 'heardle', '91': 3, '92': 1, '93': 7}, 'Devacy5737': {'app': 'heardle', '93': 6}, 'kirby4945': {'app': 'heardle', '93': 1}, 'heardle': {'Manana6969': {'93': 1}}}
+jsonblop = {'c0mbine1820': {'app': 'heardle', '91': 3, '92': 1, '93': 7}, 'Devacy5737': {'app': 'heardle', '93': 6}, 'kirby4945': {'app': 'heardle', '93': 1}, 'Manana6969': {'heardle': {'93': 1}}}
 
-"""
-Main startup of bot and set listen for heardle posts.
-"""
+
 def main():
+    """
+    Main startup of bot and set listen for heardle posts.
+    """
     scores = { }
     numHeardles = { }
 
@@ -36,12 +40,11 @@ def main():
             return
 
         if message.content.startswith('#Heardle'):
+            app = 'heardle'
             username = message.author.name + message.author.discriminator
-            score = returnScore(message.content)
-            heardleNum = getHeardleNum(message.content)
-            
-            # updateScores(message.author.name, scores, numHeardles, score)
-            updateJsonScores(message.author.name + message.author.discriminator, heardleNum, score)
+            score = getHeardleScore(message.content)
+            challengeID = getHeardleChallenegeId(message.content)
+            addNewScore(username, app, challengeID, score)
             await message.channel.send(message.author.name + message.author.discriminator + ' scored ' + str(score) + ' points!')
         
         if message.content.startswith('!HeardleStats'):
@@ -50,27 +53,26 @@ def main():
     # load in env
     client.run(os.getenv('BOT_TOKEN'))
 
-"""
-GO REGEX
 
-params:
-heardleRawCopyPasta hearlde share post
+def getHeardleChallenegeId(heardleRawCopyPasta:string)-> int:
+    """
+    GO REGEX 
+    :param heardleRawCopyPasta: hearlde share post
 
-returns heardle num in form of string
-"""
-def getHeardleNum(heardleRawCopyPasta):
+    :return: heardle num in form of string
+    """
     heardleNum = re.search("(?!#)\d+",heardleRawCopyPasta).group()
     return heardleNum
 
-"""
-returnScore: accepts heardle share post and returns score as int
 
-params:
-heardleRawCopyPasta hearlde share post
+def getHeardleScore(heardleRawCopyPasta:string) -> int:
+    """
+    getHeardleScore: accepts heardle share post and returns score as int
+    1-7 for the daily heardle
 
-returns -1 if score couldn't be parsed successfully
-"""
-def returnScore(heardleRawCopyPasta):
+    :param heardleRawCopyPasta: hearlde share post
+    :return: score, -1 if score couldn't be parsed successfully
+    """
     score = -1
     
     good_emojis= ("🟥", "🟨", "🔉", "🔈", "🟩")
@@ -96,16 +98,16 @@ def returnScore(heardleRawCopyPasta):
 
     return int(score)
 
-"""
-Update scores and save to file
 
-params:
-Username
-scores  = dict of scores
-numHeardles = total heardles user has done
-score = new score for this heardle post
-"""
-def updateScores(username, scores, numHeardles, score):
+def updateScores(username:string, scores:int, numHeardles:int, score:int) -> None:
+    """
+    Update scores and save to file
+
+    :param username: the discord name + dis
+    :param scores: dict of scores
+    :param numHeardles: total heardles user has done
+    :param score: new score for this heardle post
+    """
     if username in scores:
         numHeardles[username] = numHeardles[username] + 1
         scores[username] = scores[username] + score
@@ -118,23 +120,29 @@ def updateScores(username, scores, numHeardles, score):
     print(jsonScores)
     print(jsonNumHeardles)
 
-"""
-Adds new score to the json dump. Creates new user if required
-
-Params:
- 
-username: Username plus the discriminator  
-heardleNum: heardls number for thier daily post
-score: 1-7 for the daily heardle
-"""
-def updateJsonScores(username, heardleNum, score):
+def addNewScore(username:string, app:string, challenegeId:string, score:int) -> None:
+    """
+    Adds new score to the json dump. Creates new user if required
+    
+    :param username: Username plus the discriminator  
+    :param app: unique name of the app
+    :param challenegeId: the unique Id for the apps challenge
+    :param score: the app score (usually number of tries)
+    """
     if username in jsonblop.keys() :
-        jsonblop[username][heardleNum] = score
+        if app in username.keys():
+            jsonblop[username][app][challenegeId] = score
+        else:
+            jsonblop[username].update({app: {challenegeId:score}})
     else:
-        jsonblop.update({username: {heardleNum:score}})
+        jsonblop.update({username: {app: {challenegeId:score}}})
     print(jsonblop)
 
-def updateToDynamodb(jsonblop):
+
+def updateToDynamodb(jsonblop) -> None:
+    """
+    returns none 
+    """
     # dynamodb = boto3.resource('dynamodb')
     # table = dynamodb.Table('ttc-heardle')
     # table.update_item(
@@ -150,7 +158,6 @@ def updateToDynamodb(jsonblop):
         
     # get_item() 
     # #{'email': 'jdoe@test.com', 'id': Decimal('1'), 'last_name': 'Doe', 'first_name': 'Jane'}
-    return
 
 def retreiveFromDynamodb():
     return
