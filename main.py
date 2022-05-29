@@ -18,7 +18,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 client = discord.Client()
-# jsonblop = {'c0mbine1820': {'app': 'heardle', '91': 3, '92': 1, '93': 7}, 'Devacy5737': {'app': 'heardle', '93': 6}, 'kirby4945': {'app': 'heardle', '93': 1}, 'heardle': {'Manana6969': {'93': 1}}}
 jsonblop = {'c0mbine1820': {'app': 'heardle', '91': 3, '92': 1, '93': 7}, 'Devacy5737': {'app': 'heardle', '93': 6}, 'kirby4945': {'app': 'heardle', '93': 1}, 'Manana6969': {'heardle': {'93': 1}}}
 
 
@@ -31,7 +30,7 @@ def main():
 
     @client.event
     async def on_ready():
-        # TODO: read in file of scores and update ram values
+        # TODO: Load in from dynamodb
         print('We have logged in as {0.user}'.format(client))
 
     @client.event
@@ -50,7 +49,6 @@ def main():
         if message.content.startswith('!HeardleStats'):
              await message.channel.send(jsonblop)
 
-    # load in env
     client.run(os.getenv('BOT_TOKEN'))
 
 
