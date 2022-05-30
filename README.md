@@ -5,14 +5,20 @@ Track our scores after a headle past
 Stats would be numbers of heardles reported divided by points
 
 TODO:
- - [ ] Dynamodb mvp
-   - [ ] Create Dynamodb table 
-   - [ ] save/overwrite entire jsob blop to table
-   - [ ] Pull down all results and save into dictionary at start
- - [ ] Dynamodb 2.0
-   - [ ] Create id based on username+dis
-   - [ ] In username create unqid that is the app
-   - [ ] Update dynamodb table with new score post
+ - [ ] Break out each apps post logic into sperate files as classes that follow template
+   - [ ] Heardle
+   - [ ] Wordle
+   - [ ] CineNerdle 
+   - [ ] namethatride 
+   - [ ] Moviedle 
+ - [x] Dynamodb mvp
+   - [x] Create Dynamodb table 
+   - [x] save/overwrite entire jsob blop to table
+   - [ ] ~~Pull down all results and save into dictionary at start~~
+ - [x] Dynamodb 2.0
+   - [x] Create id based on username+dis
+   - [ ] ~~In username create unqid that is the app~~
+   - [x] Update dynamodb table with new score post
    - [ ] Query dynamodb table and to pull user's average score for app
    - [ ] Query dynamodb table and get all user's score per app
  - [ ] Dynamodb Bleed
@@ -23,14 +29,14 @@ TODO:
  - [ ] DESIGN 
    - [ ] Figure out skip logic
      - [ ] <put answer here>
-   - [ ] When a user posts twice in the same day CALL THEM AND IDIOT
+   - [x] When a user posts twice in the same day CALL THEM AND IDIOT
    - [ ] Come up with stats to show players
      - [ ] Leaderboard?
      - [ ] par?
-   - [ ] Make MVP commands for bot
-     - [ ] Just copy from what surf does for rank and stats
-     - [ ] !dleStats
-     - [ ] !dleRank
+   - [x] Make MVP commands for bot
+     - [x] Just copy from what surf does for rank and stats
+     - [ ] ~~!dleStats~~
+     - [ ] ~~!dleRank~~
 
 ## DEV NOTES:
 Heardle emjois
@@ -45,6 +51,7 @@ Heardle emjois
 - 🟨 correct artist wrong song
 
 ## Helpful links
+- https://google.github.io/styleguide/pyguide.html
 - https://discordpy.readthedocs.io
 - https://discord.com/developers/applications/979565962883899462/bot
 - https://www.heardle.app/
