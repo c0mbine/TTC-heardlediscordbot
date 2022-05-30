@@ -58,10 +58,13 @@ def main():
 
 def getHeardleChallenegeId(heardleRawCopyPasta:string)-> int:
     """
-    GO REGEX 
-    :param heardleRawCopyPasta: hearlde share post
+    Parses heardle post for the challenege ID
 
-    :return: heardle num in form of string
+    Args:
+        heardleRawCopyPasta: The raw post from heardle
+
+    Returns:
+        String Heardle Challenge id
     """
     heardleNum = re.search("(?!#)\d+",heardleRawCopyPasta).group()
     return heardleNum
@@ -69,11 +72,14 @@ def getHeardleChallenegeId(heardleRawCopyPasta:string)-> int:
 
 def getHeardleScore(heardleRawCopyPasta:string) -> int:
     """
-    getHeardleScore: accepts heardle share post and returns score as int
-    1-7 for the daily heardle
+    Parses heardle post for score, score is 1-7 for the daily heardle
 
-    :param heardleRawCopyPasta: hearlde share post
-    :return: score, -1 if score couldn't be parsed successfully
+    TODO: Put raise in here instead of -1
+
+    Args:
+        heardleRawCopyPasta: hearlde share post
+    Returns:
+        Int score, -1 if score couldn't be parsed successfully
     """
     score = -1
     
@@ -103,12 +109,13 @@ def getHeardleScore(heardleRawCopyPasta:string) -> int:
 
 def updateScores(username:string, scores:int, numHeardles:int, score:int) -> None:
     """
-    Update scores and save to file
+    Updates score to a file
 
-    :param username: the discord name + dis
-    :param scores: dict of scores
-    :param numHeardles: total heardles user has done
-    :param score: new score for this heardle post
+    Args:
+        username: the discord name + dis
+        scores: dict of scores
+        numHeardles: total heardles user has done
+        score: new score for this heardle post
     """
     if username in scores:
         numHeardles[username] = numHeardles[username] + 1
@@ -126,10 +133,11 @@ def addNewScore(username:string, app:string, challenegeId:string, score:int) -> 
     """
     Adds new score to the json dump. Creates new user if required
     
-    :param username: Username plus the discriminator  
-    :param app: unique name of the app
-    :param challenegeId: the unique Id for the apps challenge
-    :param score: the app score (usually number of tries)
+    Args:
+        username: Username plus the discriminator  
+        app: unique name of the app
+        challenegeId: the unique Id for the apps challenge
+        score: the app score (usually number of tries)
     """
     if username in jsonblop.keys() :
         if app in username.keys():
@@ -141,15 +149,17 @@ def addNewScore(username:string, app:string, challenegeId:string, score:int) -> 
     print(jsonblop)
 
 
-def updateToDynamodb(username:string, app:string, challenegeId:string, score:int):
+def updateToDynamodb(username:string, app:string, challenegeId:string, score:int) -> None:
     """
-    Adds new score to thedynamo server. Creates new user if required
+    Updates new score to thedynamo server, creates entry if required
+    
     TODO: On failure save score to local file to be added later
 
-    :param username: Username plus the discriminator  
-    :param app: unique name of the app
-    :param challenegeId: the unique Id for the apps challenge
-    :param score: the app score (usually number of tries)
+    Args:
+        username: Username plus the discriminator  
+        app: unique name of the app
+        challenegeId: the unique Id for the apps challenge
+        score: the app score (usually number of tries)
     """
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('dle-table')
