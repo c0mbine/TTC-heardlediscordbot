@@ -34,7 +34,7 @@ def main():
     @client.event
     async def on_ready():
         # TODO: Load in from dynamodb
-        updateToDynamodb('user','app','challenege','score')
+        updateToDynamodb('user1','app1','challenge_1',100)
         print('We have logged in as {0.user}'.format(client))
 
     @client.event
@@ -46,7 +46,7 @@ def main():
             app = 'heardle'
             username = f'{message.author.name}{message.author.discriminator}'
             score = getHeardleScore(message.content)
-            challengeID = getHeardleChallenegeId(message.content)
+            challengeID = getHeardleChallengeId(message.content)
             addNewScore(username, app, challengeID, score)
             await message.channel.send(f'{username} scored {str(score)}  points!')
         
@@ -56,9 +56,9 @@ def main():
     client.run(os.getenv('BOT_TOKEN'))
 
 
-def getHeardleChallenegeId(heardleRawCopyPasta:string)-> int:
+def getHeardleChallengeId(heardleRawCopyPasta:string)-> int:
     """
-    Parses heardle post for the challenege ID
+    Parses heardle post for the challenge ID
 
     Args:
         heardleRawCopyPasta: The raw post from heardle
@@ -77,7 +77,7 @@ def getHeardleScore(heardleRawCopyPasta:string) -> int:
     TODO: Put raise in here instead of -1
 
     Args:
-        heardleRawCopyPasta: hearlde share post
+        heardleRawCopyPasta: heardle share post
     Returns:
         Int score, -1 if score couldn't be parsed successfully
     """
@@ -129,49 +129,48 @@ def updateScores(username:string, scores:int, numHeardles:int, score:int) -> Non
     print(jsonScores)
     print(jsonNumHeardles)
 
-def addNewScore(username:string, app:string, challenegeId:string, score:int) -> None:
+def addNewScore(username:string, app:string, challengeId:string, score:int) -> None:
     """
     Adds new score to the json dump. Creates new user if required
     
     Args:
         username: Username plus the discriminator  
         app: unique name of the app
-        challenegeId: the unique Id for the apps challenge
+        challengeId: the unique Id for the apps challenge
         score: the app score (usually number of tries)
     """
     if username in jsonblop.keys() :
         if app in username.keys():
-            jsonblop[username][app][challenegeId] = score
+            jsonblop[username][app][challengeId] = score
         else:
-            jsonblop[username].update({app: {challenegeId:score}})
+            jsonblop[username].update({app: {challengeId:score}})
     else:
-        jsonblop.update({username: {app: {challenegeId:score}}})
+        jsonblop.update({username: {app: {challengeId:score}}})
     print(jsonblop)
 
 
-def updateToDynamodb(username:string, app:string, challenegeId:string, score:int) -> None:
+def updateToDynamodb(username:string, app:string, challengeId:string, score:int) -> None:
     """
-    Updates new score to thedynamo server, creates entry if required
+    Updates new score to the dynamodb server, creates entry if required
     
     TODO: On failure save score to local file to be added later
 
     Args:
         username: Username plus the discriminator  
         app: unique name of the app
-        challenegeId: the unique Id for the apps challenge
+        challengeId: the unique Id for the apps challenge
         score: the app score (usually number of tries)
     """
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('dle-table')
 
-    # Query Dynamodb to see if user/app/challenege deosn't exist
+    # Query Dynamodb to see if user/app/challenge deosn't exist
     # if ... then addNewUserApptoDynamodb()
 
     # After user/app exists then update the entry
     response = table.update_item(
         Key={"username": username,"appname": app},
-        UpdateExpression = f'SET {app}_{challenegeId} = if_not_exists({app}_{challenegeId}, :score)',
-        # UpdateExpression="SET heardle_80 = if_not_exists(Price, :val)",
+        UpdateExpression = f'SET {app}_{challengeId} = if_not_exists({app}_{challengeId}, :score)',
         ExpressionAttributeValues={':score':score},
         ReturnValues="ALL_NEW"
     )
@@ -190,7 +189,7 @@ def addNewUserApptoDynamodb(username:string, app:string) -> response:
     return response
 
 
-def retreiveFromDynamodb():
+def retrieveFromDynamodb():
     return
 
 if __name__ == "__main__":
