@@ -3,11 +3,15 @@
 A Discord bot to keep track of Heardle scores.
 Any member can use the bot to track their scores
 and number of entries.
+
+For standard in python see: https://google.github.io/styleguide/pyguide.html
 """
+
 from copy import error
 import os
 import json
 import string
+from urllib import response
 import discord
 import boto3
 import re
@@ -18,8 +22,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 client = discord.Client()
-jsonblop = {'c0mbine1820': {'app': 'heardle', '91': 3, '92': 1, '93': 7}, 'Devacy5737': {'app': 'heardle', '93': 6}, 'kirby4945': {'app': 'heardle', '93': 1}, 'Manana6969': {'heardle': {'93': 1}}}
-
+jsonblop = {'c0mbine1820': {'heardle': {'91': 3, '92': 1, '93': 7}}, 'Devacy5737': {'heardle':{'93': 6}}, 'kirby4945': {'heardle':{'93': 1}}, 'Manana6969': {'heardle': {'93': 1}}}
 
 def main():
     """
@@ -31,6 +34,7 @@ def main():
     @client.event
     async def on_ready():
         # TODO: Load in from dynamodb
+        updateToDynamodb('user','app','challenege','score')
         print('We have logged in as {0.user}'.format(client))
 
     @client.event
@@ -40,14 +44,14 @@ def main():
 
         if message.content.startswith('#Heardle'):
             app = 'heardle'
-            username = message.author.name + message.author.discriminator
+            username = f'{message.author.name}{message.author.discriminator}'
             score = getHeardleScore(message.content)
             challengeID = getHeardleChallenegeId(message.content)
             addNewScore(username, app, challengeID, score)
-            await message.channel.send(message.author.name + message.author.discriminator + ' scored ' + str(score) + ' points!')
+            await message.channel.send(f'{username} scored {str(score)}  points!')
         
         if message.content.startswith('!HeardleStats'):
-             await message.channel.send(jsonblop)
+            await message.channel.send(jsonblop)
 
     client.run(os.getenv('BOT_TOKEN'))
 
@@ -137,25 +141,44 @@ def addNewScore(username:string, app:string, challenegeId:string, score:int) -> 
     print(jsonblop)
 
 
-def updateToDynamodb(jsonblop) -> None:
+def updateToDynamodb(username:string, app:string, challenegeId:string, score:int):
     """
-    returns none 
+    Adds new score to thedynamo server. Creates new user if required
+    TODO: On failure save score to local file to be added later
+
+    :param username: Username plus the discriminator  
+    :param app: unique name of the app
+    :param challenegeId: the unique Id for the apps challenge
+    :param score: the app score (usually number of tries)
     """
-    # dynamodb = boto3.resource('dynamodb')
-    # table = dynamodb.Table('ttc-heardle')
-    # table.update_item(
-    #     Key={
-    #             'id': 1,
-    #         },
-    #     UpdateExpression="set first_name = :g",
-    #     ExpressionAttributeValues={
-    #             ':g': "Jane"
-    #         },
-    #     ReturnValues="UPDATED_NEW"
-    #     )
-        
-    # get_item() 
-    # #{'email': 'jdoe@test.com', 'id': Decimal('1'), 'last_name': 'Doe', 'first_name': 'Jane'}
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('dle-table')
+
+    # Query Dynamodb to see if user/app/challenege deosn't exist
+    # if ... then addNewUserApptoDynamodb()
+
+    # After user/app exists then update the entry
+    response = table.update_item(
+        Key={"username": username,"appname": app},
+        UpdateExpression = f'SET {app}_{challenegeId} = if_not_exists({app}_{challenegeId}, :score)',
+        # UpdateExpression="SET heardle_80 = if_not_exists(Price, :val)",
+        ExpressionAttributeValues={':score':score},
+        ReturnValues="ALL_NEW"
+    )
+    print(response)
+
+def addNewUserApptoDynamodb(username:string, app:string) -> response:
+    dynamodb = boto3.resource('dynamodb')
+    table = dynamodb.Table('dle-table')
+
+    response = table.put_item(
+        Item={
+            "username": "c0mbine1820",
+            "appname": "otherapp"
+        }
+    )
+    return response
+
 
 def retreiveFromDynamodb():
     return
