@@ -24,6 +24,7 @@ load_dotenv()
 client = discord.Client()
 jsonblop = {'c0mbine1820': {'heardle': {'91': 3, '92': 1, '93': 7}}, 'Devacy5737': {'heardle':{'93': 6}}, 'kirby4945': {'heardle':{'93': 1}}, 'Manana6969': {'heardle': {'93': 1}}}
 
+
 def main():
     """
     Main startup of bot and set listen for heardle posts.
@@ -34,7 +35,7 @@ def main():
     @client.event
     async def on_ready():
         # TODO: Load in from dynamodb
-        updateToDynamodb('user1','app1','challenge_1',100)
+        # updateItemDynamodb('user2','app2','challenge_1',100)
         print('We have logged in as {0.user}'.format(client))
 
     @client.event
@@ -47,14 +48,52 @@ def main():
             username = f'{message.author.name}{message.author.discriminator}'
             score = getHeardleScore(message.content)
             challengeID = getHeardleChallengeId(message.content)
-            addNewScore(username, app, challengeID, score)
-            await message.channel.send(f'{username} scored {str(score)}  points!')
-        
-        if message.content.startswith('!HeardleStats'):
-            await message.channel.send(jsonblop)
+
+            response = updateItemDynamodb(username, app, challengeID, score)
+            response_score = response['Attributes'][f'{app}_{challengeID}']
+
+            if (response_score != score):
+                await message.channel.send('Nice try bro it\'s still {}'.format(response_score))
+            else:
+                await message.channel.send(f'{username} scored {response_score} points' )
+            
+        if message.content.startswith('!dle'):
+            returnMessage = dleCommandInvoked(message.content)
+            await message.channel.send(returnMessage)
 
     client.run(os.getenv('BOT_TOKEN'))
 
+
+def dleCommandInvoked(message:string) -> string:
+    """
+    If message starts with !dle then attempt to run command. Calls other functions that query dynamodb
+
+    Args:
+        message: Raw string from discord message.content
+    Returns:
+        returnMessage: String return to the user
+    """
+
+    returnMessage = ''
+    commands = {
+        '!dleh': {'description': 'HELP: dle is a bot that tracks results from Heardle, Wordle, etc\n Currently supports: Heardle\n\nCommands:', 'flags':[None]},
+        '!dlep': {'description': 'Personal stats: ', 'flags':[]},
+        '!dlet': {'description': 'Top players: ', 'flags':[]}
+    }
+    if (message.lower() in commands.keys()):
+        if message.lower() == '!dlep':
+            returnMessage = "YOUR STATS HERE"
+        elif message.lower() == '!dlet':
+            returnMessage = "TOP PLAYER STATS HERE"
+        elif message.lower() == '!dleh':
+            for command in commands.keys():
+                returnMessage += f'{command} - {commands[command]["description"]}\n'
+    else:
+        for command in commands.keys():
+            returnMessage += f'{command} - {commands[command]["description"]}\n'
+
+    
+    return returnMessage
 
 def getHeardleChallengeId(heardleRawCopyPasta:string)-> int:
     """
@@ -129,6 +168,7 @@ def updateScores(username:string, scores:int, numHeardles:int, score:int) -> Non
     print(jsonScores)
     print(jsonNumHeardles)
 
+
 def addNewScore(username:string, app:string, challengeId:string, score:int) -> None:
     """
     Adds new score to the json dump. Creates new user if required
@@ -149,7 +189,7 @@ def addNewScore(username:string, app:string, challengeId:string, score:int) -> N
     print(jsonblop)
 
 
-def updateToDynamodb(username:string, app:string, challengeId:string, score:int) -> None:
+def updateItemDynamodb(username:string, app:string, challengeId:string, score:int) -> response:
     """
     Updates new score to the dynamodb server, creates entry if required
     
@@ -164,9 +204,6 @@ def updateToDynamodb(username:string, app:string, challengeId:string, score:int)
     dynamodb = boto3.resource('dynamodb')
     table = dynamodb.Table('dle-table')
 
-    # Query Dynamodb to see if user/app/challenge deosn't exist
-    # if ... then addNewUserApptoDynamodb()
-
     # After user/app exists then update the entry
     response = table.update_item(
         Key={"username": username,"appname": app},
@@ -175,19 +212,7 @@ def updateToDynamodb(username:string, app:string, challengeId:string, score:int)
         ReturnValues="ALL_NEW"
     )
     print(response)
-
-def addNewUserApptoDynamodb(username:string, app:string) -> response:
-    dynamodb = boto3.resource('dynamodb')
-    table = dynamodb.Table('dle-table')
-
-    response = table.put_item(
-        Item={
-            "username": "c0mbine1820",
-            "appname": "otherapp"
-        }
-    )
     return response
-
 
 def retrieveFromDynamodb():
     return
